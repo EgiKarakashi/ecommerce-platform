@@ -57,7 +57,7 @@ This platform follows a microservices architecture with the following key compon
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-org/ecommerce-platform.git
+   git clone https://github.com/EgiKarakashi/ecommerce-platform.git
    cd ecommerce-platform
    ```
 
