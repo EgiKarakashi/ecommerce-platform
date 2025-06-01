@@ -1,0 +1,264 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Kotlin
+*.kotlin_module
+
+# Spring Boot
+.spring-boot-devtools.properties
+
+# Next.js
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
+
+# Node.js
+frontend/node_modules/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.pnpm-debug.log*
+
+# Next.js cache
+frontend/.next/
+frontend/out/
+
+# Production builds
+frontend/build/
+frontend/dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker
+.docker/
+docker-compose.override.yml
+.dockerignore
+
+# Terraform
+infrastructure/terraform/**/.terraform/
+infrastructure/terraform/**/.terraform.lock.hcl
+infrastructure/terraform/**/terraform.tfstate
+infrastructure/terraform/**/terraform.tfstate.backup
+infrastructure/terraform/**/.terraform.tfstate.lock.info
+infrastructure/terraform/**/terraform.tfvars
+infrastructure/terraform/**/*.tfplan
+infrastructure/terraform/**/*.tfplan.json
+infrastructure/terraform/**/.terraformrc
+infrastructure/terraform/**/terraform.rc
+
+# Ansible
+infrastructure/ansible/**/*.retry
+infrastructure/ansible/**/vault_pass.txt
+infrastructure/ansible/**/.vault_pass
+
+# Kubernetes secrets
+k8s/**/secret.yml
+k8s/**/*-secret.yml
+
+# Logs
+logs/
+*.log
+/logs/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Application specific secrets
+**/application-secrets.yml
+**/application-local.yml
+backend/**/src/main/resources/application-local.yml
+backend/**/src/main/resources/application-secrets.yml
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+*.keystore
+*.truststore
+
+# Monitoring and metrics
+prometheus/
+grafana/data/
+
+# Test coverage reports
+coverage/
+*.lcov
+jacoco.xml
+*.exec
+
+# Local development files
+.local/
+local-config/
+dev-setup/
+
+# Backup files
+*.bak
+*.backup
+
+# JProfiler
+*.jps
+
+# YourKit
+*.yjp
+
+# SonarQube
+.sonar/
+.scannerwork/
+
+# Checkstyle
+checkstyle-result.xml
+
+# PMD
+pmd.xml
+
+# SpotBugs
+spotbugsXml.xml
+
+# Detekt
+detekt.xml
+
+# Build artifacts
+**/build/
+**/target/
+**/out/
+
+# IDE project files
+.project
+.classpath
+.settings/
+.metadata/
+
+# Generated documentation
+docs/build/
+docs/_build/
+docs/site/
+
+# Local environment setup
+.env.example
+docker-compose.local.yml
+
+# Application runtime data
+data/
+storage/
+uploads/
+
+# Cache directories
+.cache/
+.gradle/
+.m2/repository/
+
+# Helm charts
+helm/charts/*.tgz
+
+# ArgoCD applications
+argocd/applications/local/
