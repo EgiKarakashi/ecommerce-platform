@@ -5,12 +5,11 @@ import org.springframework.boot.runApplication
 import org.springframework.amqp.rabbit.annotation.EnableRabbit
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 /**
  * Main application class for the User Service
- * 
+ *
  * This service handles all user-related functionality including:
  * - User registration and authentication
  * - JWT token generation and validation
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableRabbit
 @EnableJpaRepositories
 @EnableJpaAuditing
-@EnableEurekaClient
 @EnableTransactionManagement
 class UserServiceApplication
 

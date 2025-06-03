@@ -80,26 +80,17 @@ bin/
 # Spring Boot
 .spring-boot-devtools.properties
 
-# Next.js
-frontend/.next/
-frontend/out/
-frontend/build/
-frontend/dist/
-
 # Node.js
-frontend/node_modules/
-frontend/npm-debug.log*
-frontend/yarn-debug.log*
-frontend/yarn-error.log*
-frontend/.pnpm-debug.log*
+microfrontends/node_modules/
+microfrontends/shared/node_modules
 
 # Next.js cache
-frontend/.next/
-frontend/out/
+microfrontends/*/.next/
+microfrontends/*/out/
 
 # Production builds
-frontend/build/
-frontend/dist/
+microfrontends/*/build/
+microfrontends/*/dist/
 
 # Environment variables
 .env
@@ -107,11 +98,16 @@ frontend/dist/
 .env.development.local
 .env.test.local
 .env.production.local
-frontend/.env
-frontend/.env.local
-frontend/.env.development.local
-frontend/.env.test.local
-frontend/.env.production.local
+microfrontends/.env
+microfrontends/.env.local
+microfrontends/.env.development.local
+microfrontends/.env.test.local
+microfrontends/.env.production.local
+microfrontends/*/.env
+microfrontends/*/.env.local
+microfrontends/*/.env.development.local
+microfrontends/*/.env.test.local
+microfrontends/*/.env.production.local
 
 # Database
 *.db
@@ -122,6 +118,8 @@ frontend/.env.production.local
 .docker/
 docker-compose.override.yml
 .dockerignore
+microfrontends/docker-compose.override.yml
+microfrontends/.dockerignore
 
 # Terraform
 infrastructure/terraform/**/.terraform/
@@ -195,6 +193,10 @@ coverage/
 *.lcov
 jacoco.xml
 *.exec
+microfrontends/*/coverage/
+microfrontends/*/*.lcov
+microfrontends/*/jacoco.xml
+microfrontends/*/*.exec
 
 # Local development files
 .local/
@@ -256,9 +258,35 @@ uploads/
 .cache/
 .gradle/
 .m2/repository/
+microfrontends/*/.cache/
+microfrontends/*/.gradle/
+microfrontends/*/.m2/repository/
 
-# Helm charts
-helm/charts/*.tgz
+# Microfrontends specific
+microfrontends/*/remoteEntry.js
+microfrontends/*/federation-stats.json
+microfrontends/*/.webpack/
+microfrontends/*/.turbo/
+microfrontends/*/.swc/
 
-# ArgoCD applications
-argocd/applications/local/
+# TypeScript build info
+microfrontends/*/tsconfig.tsbuildinfo
+microfrontends/*/*/tsconfig.tsbuildinfo
+
+# Storybook
+microfrontends/*/storybook-static/
+
+# Playwright
+microfrontends/*/test-results/
+microfrontends/*/playwright-report/
+microfrontends/*/playwright/.cache/
+
+# Cypress
+microfrontends/*/cypress/videos/
+microfrontends/*/cypress/screenshots/
+
+# ESLint cache
+microfrontends/*/.eslintcache
+
+# Stylelint cache
+microfrontends/*/.stylelintcache

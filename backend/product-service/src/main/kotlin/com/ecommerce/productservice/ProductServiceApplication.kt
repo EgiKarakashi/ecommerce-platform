@@ -5,13 +5,12 @@ import org.springframework.boot.runApplication
 import org.springframework.amqp.rabbit.annotation.EnableRabbit
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 import org.springframework.transaction.annotation.EnableTransactionManagement
 import org.springframework.cache.annotation.EnableCaching
 
 /**
  * Main application class for the Product Service
- * 
+ *
  * This service handles all product-related functionality including:
  * - Product catalog management
  * - Category management
@@ -25,7 +24,6 @@ import org.springframework.cache.annotation.EnableCaching
 @EnableRabbit
 @EnableJpaRepositories
 @EnableJpaAuditing
-@EnableEurekaClient
 @EnableTransactionManagement
 @EnableCaching
 class ProductServiceApplication

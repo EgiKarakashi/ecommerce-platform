@@ -1,0 +1,197 @@
+# GitHub Actions workflow for microfrontend deployment
+name: Deploy Microfrontends
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '18'
+  REGISTRY: ghcr.io
+  NAMESPACE: ${{ github.repository_owner }}
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      shell: ${{ steps.changes.outputs.shell }}
+      catalog: ${{ steps.changes.outputs.catalog }}
+      cart: ${{ steps.changes.outputs.cart }}
+      account: ${{ steps.changes.outputs.account }}
+      shared: ${{ steps.changes.outputs.shared }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            shell:
+              - 'microfrontends/shell-app/**'
+              - 'microfrontends/shared/**'
+            catalog:
+              - 'microfrontends/catalog-mf/**'
+              - 'microfrontends/shared/**'
+            cart:
+              - 'microfrontends/cart-mf/**'
+              - 'microfrontends/shared/**'
+            account:
+              - 'microfrontends/account-mf/**'
+              - 'microfrontends/shared/**'
+            shared:
+              - 'microfrontends/shared/**'
+
+  test-and-build:
+    name: Test & Build
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    strategy:
+      matrix:
+        service:
+          - { name: 'shell-app', path: 'microfrontends/shell-app', port: 3000, changed: '${{ needs.detect-changes.outputs.shell }}' }
+          - { name: 'catalog-mf', path: 'microfrontends/catalog-mf', port: 3001, changed: '${{ needs.detect-changes.outputs.catalog }}' }
+          - { name: 'cart-mf', path: 'microfrontends/cart-mf', port: 3002, changed: '${{ needs.detect-changes.outputs.cart }}' }
+          - { name: 'account-mf', path: 'microfrontends/account-mf', port: 3003, changed: '${{ needs.detect-changes.outputs.account }}' }
+    
+    if: matrix.service.changed == 'true'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: '${{ matrix.service.path }}/package-lock.json'
+      
+      - name: Install dependencies
+        run: |
+          cd ${{ matrix.service.path }}
+          npm ci
+      
+      - name: Run tests
+        run: |
+          cd ${{ matrix.service.path }}
+          npm run test:ci
+          
+      - name: Run linting
+        run: |
+          cd ${{ matrix.service.path }}
+          npm run lint
+          
+      - name: Type check
+        run: |
+          cd ${{ matrix.service.path }}
+          npm run type-check
+      
+      - name: Build application
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_CATALOG_HOST: ${{ secrets.CATALOG_HOST }}
+          NEXT_PUBLIC_CART_HOST: ${{ secrets.CART_HOST }}
+          NEXT_PUBLIC_ACCOUNT_HOST: ${{ secrets.ACCOUNT_HOST }}
+        run: |
+          cd ${{ matrix.service.path }}
+          npm run build
+      
+      - name: Build Docker image
+        run: |
+          cd ${{ matrix.service.path }}
+          docker build -t ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ matrix.service.name }}:${{ github.sha }} .
+          docker tag ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ matrix.service.name }}:${{ github.sha }} ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ matrix.service.name }}:latest
+      
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Push Docker image
+        if: github.event_name != 'pull_request'
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ matrix.service.name }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/${{ matrix.service.name }}:latest
+
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v1
+        with:
+          manifests: |
+            k8s/services/shell-app/
+            k8s/services/catalog-mf/
+            k8s/services/cart-mf/
+            k8s/services/account-mf/
+          images: |
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/shell-app:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/catalog-mf:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/cart-mf:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/account-mf:${{ github.sha }}
+          kubeconfig: ${{ secrets.KUBE_CONFIG_STAGING }}
+
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v1
+        with:
+          manifests: |
+            k8s/services/shell-app/
+            k8s/services/catalog-mf/
+            k8s/services/cart-mf/
+            k8s/services/account-mf/
+          images: |
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/shell-app:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/catalog-mf:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/cart-mf:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.NAMESPACE }}/account-mf:${{ github.sha }}
+          kubeconfig: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
+
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.ref == 'refs/heads/develop'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      
+      - name: Install Playwright
+        run: |
+          npm install -g @playwright/test
+          npx playwright install
+      
+      - name: Run E2E tests
+        env:
+          BASE_URL: ${{ secrets.STAGING_BASE_URL }}
+        run: |
+          cd microfrontends
+          npx playwright test --config=playwright.config.ts

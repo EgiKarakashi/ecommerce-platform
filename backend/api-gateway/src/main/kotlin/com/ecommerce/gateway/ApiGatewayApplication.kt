@@ -2,12 +2,11 @@ package com.ecommerce.gateway
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient
-import org.springframework.web.reactive.config.EnableWebFluxSecurity
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 
 /**
  * Main application class for the API Gateway
- * 
+ *
  * This gateway serves as the single entry point for all client requests and provides:
  * - Request routing to appropriate microservices
  * - Authentication and authorization
@@ -18,7 +17,6 @@ import org.springframework.web.reactive.config.EnableWebFluxSecurity
  * - Request/response logging and monitoring
  */
 @SpringBootApplication
-@EnableEurekaClient
 @EnableWebFluxSecurity
 class ApiGatewayApplication
 
